@@ -1,0 +1,54 @@
+{
+  "name": "@datawheel/use-translation",
+  "version": "0.1.0",
+  "description": "A react-i18next compatible translation hook for componentized applications.",
+  "main": "index.cjs.js",
+  "module": "index.esm.js",
+  "types": "index.d.ts",
+  "readme": "README.md",
+  "exports": {
+    ".": {
+      "default": "./index.cjs.js",
+      "import": "./index.esm.js",
+      "require": "./index.cjs.js"
+    }
+  },
+  "files": [
+    "index.cjs.js",
+    "index.esm.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build:library": "rollup -c",
+    "build:typings": "tsc --esModuleInterop --emitDeclarationOnly --declaration index.ts",
+    "build": "npm run build:library && npm run build:typings",
+    "pretest": "npm run build:library",
+    "test": "mocha index.test.js",
+    "prepublishOnly": "npm run test && npm run build:typings"
+  },
+  "keywords": ["translation", "i18n", "l10n", "react", "hook", "context"],
+  "author": "Francisco Abarzua <francisco@datawheel.us>",
+  "license": "MIT",
+  "repository": "github:Datawheel/use-translation",
+  "homepage": "https://github.com/Datawheel/use-translation#readme",
+  "bugs": {
+    "url": "https://github.com/Datawheel/use-translation/issues"
+  },
+  "dependencies": {
+    "pathval": "^1.1.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.10.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.0",
+    "@types/react": ">=16.10.0",
+    "mocha": "^8.3.0",
+    "react": ">=16.10.0",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-license": "^2.2.0",
+    "rollup": "^2.40.0",
+    "tslib": "^2.1.0",
+    "typescript": "^4.2.2"
+  }
+}

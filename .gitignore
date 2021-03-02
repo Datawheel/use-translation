@@ -1,0 +1,5 @@
+node_modules/
+
+index.cjs.js
+index.esm.js
+index.d.ts
