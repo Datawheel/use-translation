@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/use-translation",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A react-i18next compatible translation hook for componentized applications.",
   "main": "index.cjs.js",
   "module": "index.esm.js",
@@ -26,7 +26,14 @@
     "test": "mocha index.test.js",
     "prepublishOnly": "npm run test && npm run build:typings"
   },
-  "keywords": ["translation", "i18n", "l10n", "react", "hook", "context"],
+  "keywords": [
+    "translation",
+    "i18n",
+    "l10n",
+    "react",
+    "hook",
+    "context"
+  ],
   "author": "Francisco Abarzua <francisco@datawheel.us>",
   "license": "MIT",
   "repository": "github:Datawheel/use-translation",
