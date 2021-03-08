@@ -1,5 +1,5 @@
-import React, {createContext, createElement, useContext, useMemo, useState} from "react";
-import {hasProperty, getPathInfo} from "pathval";
+import { getPathInfo, hasProperty } from "pathval";
+import React, { createContext, createElement, useContext, useMemo, useState } from "react";
 
 interface FactoryOptions {
   /**
@@ -38,6 +38,12 @@ interface FactoryOutput {
    * Calling it will return a TranslationContextProps object.
    */
   useTranslation(): TranslationContextProps;
+
+  /**
+   * Creates a HOC where the Component provided is wrapped with a 
+   * TranslationProvider component.
+   */
+  withTranslation<T>(Component: React.ComponentType<T>): React.FC<T & WithTranslationProps>;
 }
 
 /**
@@ -80,7 +86,7 @@ export interface TranslationContextProps {
    * Calling it triggers a render on everything under the TranslationProvider.
    */
   setLocale: (lang: string) => void;
-  
+
   /**
    * The main translate function.
    * Retrieves the labels from the translation dictionary in the current locale.
@@ -108,8 +114,41 @@ export interface TranslationProviderProps {
   translations?: Record<string, TranslationDict>;
 }
 
+export interface WithTranslationProps {
+  /**
+   * Defines the translation dictionary.
+   * The keys of this object are the locale codes you will use within your app,
+   * and its values are the TranslationDicts for these codes.
+   */
+  translationDicts?: TranslationProviderProps["translations"];
+
+  /**
+   * Sets the default locale to use in the app.
+   * It's not necesary to use a real ISO 639 code, you can use any key you want.
+   */
+  translationLocale?: TranslationProviderProps["defaultLocale"];
+}
+
 export function translationFactory(options: Partial<FactoryOptions>): FactoryOutput {
   const TranslationContext: React.Context<TranslationContextProps | undefined> = createContext(undefined);
+
+  const TranslationProvider: React.FC<TranslationProviderProps> = (props) => {
+    const [locale, setLocale] = useState(props.defaultLocale || options.defaultLocale);
+
+    const translate: TranslateFunction = useMemo(() => {
+      const { translations = {} } = props;
+      if (!options.defaultTranslation && !hasProperty(translations, locale)) {
+        throw new Error(`Translation dictionary for locale "${locale}" not provided.`);
+      }
+      return translateFunctionFactory(translations[locale] || options.defaultTranslation);
+    }, [locale]);
+
+    return createElement(
+      TranslationContext.Provider,
+      { value: { locale, setLocale, translate } },
+      props.children
+    );
+  };
 
   return {
     TranslationConsumer: (props) =>
@@ -120,23 +159,7 @@ export function translationFactory(options: Partial<FactoryOptions>): FactoryOut
         return props.children(context);
       }),
 
-    TranslationProvider: (props) => {
-      const [locale, setLocale] = useState(props.defaultLocale || options.defaultLocale);
-
-      const translate: TranslateFunction = useMemo(() => {
-        const { translations = {} } = props;
-        if (!options.defaultTranslation && !hasProperty(translations, locale)) {
-          throw new Error(`Translation dictionary for locale "${locale}" not provided.`);
-        }
-        return translateFunctionFactory(translations[locale] || options.defaultTranslation);
-      }, [locale]);
-
-      return createElement(
-        TranslationContext.Provider,
-        { value: { locale, setLocale, translate } },
-        props.children
-      );
-    },
+    TranslationProvider,
 
     useTranslation(): TranslationContextProps {
       const context = useContext(TranslationContext);
@@ -144,6 +167,18 @@ export function translationFactory(options: Partial<FactoryOptions>): FactoryOut
         throw new Error("useTranslation must be used within a TranslationProvider.");
       }
       return context;
+    },
+
+    withTranslation<T>(Component: React.ComponentType<T>) {
+      const WithTranslation: React.FC<T & WithTranslationProps> = (props) => {
+        const { children, translationDicts, translationLocale, ...restProps } = props;
+        return createElement(TranslationProvider,
+          { translations: translationDicts, defaultLocale: translationLocale },
+          createElement(Component, restProps as T, children)
+        );
+      };
+      WithTranslation.displayName = `${Component.displayName || Component.name}WithTranslation`;
+      return WithTranslation;
     },
   };
 }
