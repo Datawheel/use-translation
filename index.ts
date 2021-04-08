@@ -184,15 +184,26 @@ export function translationFactory(options: Partial<FactoryOptions>): FactoryOut
 }
 
 export function translateFunctionFactory(dictionary: TranslationDict): TranslateFunction {
+  const alterTemplates = (path, data) => {
+    const n = data ? data.n : undefined;
+    if (n != null) {
+      const { name, parent } = path;
+      if (n == 0 && hasProperty(parent, `${name}_zero`)) {
+        return parent[`${name}_zero`];
+      }
+      // using <> instead of != does an implicit .valueOf()
+      if ((n > 1 || n < 1) && hasProperty(parent, `${name}_plural`)) {
+        return parent[`${name}_plural`];
+      }
+    }
+    return path.value;
+  };
+  
   const braceRegex = /{(\d+|[a-z$_][a-z\d$_]*?(?:\.[a-z\d$_]*?)*?)}/gi;
 
   return (template, data) => {
     const path = getPathInfo(dictionary, template);
-    const string = path.exists
-      ? data && (data.n > 1 || data.n < 1) && hasProperty(path.parent, `${path.name}_plural`)
-        ? path.parent[`${path.name}_plural`]
-        : path.value
-      : template;
-    return !data ? string : `${string}`.replace(braceRegex, (_, key) => `${data[key] || ""}`);
+    const string = !path.exists ? template : alterTemplates(path, data);
+    return !data ? string : `${string}`.replace(braceRegex, (_, key) => `${data[key] ?? ""}`);
   };
 }

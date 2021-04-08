@@ -7,8 +7,10 @@ const l10n = {
   "alpha": "there's a simple item",
   "beta": "there's a {item} with replacement",
   "gamma": "there's a letter for {receiver}, from {sender}",
-  "delta": "you could stop and five or six stores, or, just {n}",
-  "delta_plural": "Gee Bill! How come your mom lets you eat {n} weiners?",
+  "delta": "I have a counter marking {n}",
+  "epsilon": "you could stop and five or six stores, or, just {n}",
+  "epsilon_zero": "This here > \"{n}\" < should not be empty",
+  "epsilon_plural": "Gee Bill! How come your mom lets you eat {n} weiners?",
   "nested": {
     "values": "am I right?",
     "replacements": "Datawheel's biggest projects are {first}, {second}, and {third}."
@@ -32,9 +34,16 @@ describe("translateFunctionFactory", () => {
     assert.strictEqual(t("gamma", {sender: "Alice", receiver: "Bob"}), "there's a letter for Bob, from Alice");
   });
 
-  it("should return a term from translation dict, and perform a plural replacement", () => {
-    assert.strictEqual(t("delta", {n: 1}), "you could stop and five or six stores, or, just 1");
-    assert.strictEqual(t("delta", {n: 2}), "Gee Bill! How come your mom lets you eat 2 weiners?");
+  it("should return a term from translation dict, and perform a simple number replacement", () => {
+    assert.strictEqual(t("delta", {n: 0}), "I have a counter marking 0");
+    assert.strictEqual(t("delta", {n: 1}), "I have a counter marking 1");
+    assert.strictEqual(t("delta", {n: 2}), "I have a counter marking 2");
+  });
+
+  it("should return a term from translation dict, and perform a zero/plural replacement", () => {
+    assert.strictEqual(t("epsilon", {n: 0}), "This here > \"0\" < should not be empty");
+    assert.strictEqual(t("epsilon", {n: 1}), "you could stop and five or six stores, or, just 1");
+    assert.strictEqual(t("epsilon", {n: 2}), "Gee Bill! How come your mom lets you eat 2 weiners?");
   });
 
   it("should return the same key if term is not in translation dict", () => {
