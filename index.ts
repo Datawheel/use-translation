@@ -4,7 +4,7 @@ import React, { createContext, createElement, useContext, useMemo, useState } fr
 interface FactoryOptions {
   /**
    * This property sets the default labels which your app will use if a
-   * defaultLocale is not set, or if the locale code set afterwards is not 
+   * defaultLocale is not set, or if the locale code set afterwards is not
    * present in the translation dictionary.  
    * If it's not defined, and during runtime a locale code not present in the 
    * translation dictionary is set, the TranslationProvider will throw an error.
@@ -40,7 +40,7 @@ interface FactoryOutput {
   useTranslation(): TranslationContextProps;
 
   /**
-   * Creates a HOC where the Component provided is wrapped with a 
+   * Creates a HOC where the Component provided is wrapped with a
    * TranslationProvider component.
    */
   withTranslation<T>(Component: React.ComponentType<T>): React.FC<T & WithTranslationProps>;
@@ -177,7 +177,7 @@ export function translationFactory(options: Partial<FactoryOptions>): FactoryOut
           createElement(Component, restProps as T, children)
         );
       };
-      WithTranslation.displayName = `${Component.displayName || Component.name}WithTranslation`;
+      WithTranslation.displayName = `${Component.displayName || Component["name"]}WithTranslation`;
       return WithTranslation;
     },
   };
