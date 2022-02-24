@@ -5,16 +5,18 @@ const l10n = {
   "foo": "bar",
   "hotel": "trivago",
   "alpha": "there's a simple item",
-  "beta": "there's a {item} with replacement",
-  "gamma": "there's a letter for {receiver}, from {sender}",
-  "delta": "I have a counter marking {n}",
-  "epsilon": "you could stop and five or six stores, or, just {n}",
-  "epsilon_zero": "This here > \"{n}\" < should not be empty",
-  "epsilon_plural": "Gee Bill! How come your mom lets you eat {n} weiners?",
+  "beta": "there's a {{item}} with replacement",
+  "gamma": "there's a letter for {{receiver}}, from {{sender}}",
+  "delta": "I have a counter marking {{n}}",
+  "epsilon": "you could stop and five or six stores, or, just {{n}}",
+  "epsilon_zero": "This here > \"{{n}}\" < should not be empty",
+  "epsilon_plural": "Gee Bill! How come your mom lets you eat {{n}} weiners?",
   "nested": {
     "values": "am I right?",
-    "replacements": "Datawheel's biggest projects are {first}, {second}, and {third}."
-  }
+    "replacements": "Datawheel's biggest projects are {{first}}, {{second}}, and {{third}}."
+  },
+  "single": "Hello {name}",
+  "double": "Hello {{name}}"
 };
 
 const t = translateFunctionFactory(l10n);
@@ -52,7 +54,7 @@ describe("translateFunctionFactory", () => {
   });
 
   it("should return the same key if term is not in translation dict, and perform a replacement", () => {
-    assert.strictEqual(t("a variable {foo} used for examples", {foo: "bar"}), "a variable bar used for examples");
+    assert.strictEqual(t("a variable {{foo}} used for examples", {foo: "bar"}), "a variable bar used for examples");
   });
 
   it("should return a term using a nested key from translation dict", () => {
@@ -62,4 +64,9 @@ describe("translateFunctionFactory", () => {
   it("should return a term using a nested key from translation dict, and perform a value replacement", () => {
     assert.strictEqual(t("nested.replacements", {first: "the OEC", second: "DataUSA", third: "DataMexico"}), "Datawheel's biggest projects are the OEC, DataUSA, and DataMexico.");
   });
+
+  it("should replace a single and double braced variable in the same way", () => {
+    const vars = {name: "Tester"};
+    assert.strictEqual(t("single", vars), t("double", vars));
+  })
 });
