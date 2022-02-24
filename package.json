@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "build:library": "rollup -c",
-    "build:typings": "tsc --esModuleInterop --emitDeclarationOnly --declaration index.ts",
+    "build:typings": "tsc --esModuleInterop --emitDeclarationOnly --declaration --lib es2015 index.ts",
     "build": "npm run build:library && npm run build:typings",
     "pretest": "npm run build:library",
     "test": "mocha index.test.js",
@@ -49,9 +49,9 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.0",
-    "@types/react": ">=16.10.0",
+    "@types/react": "^16.12.0",
     "mocha": "^8.3.0",
-    "react": ">=16.10.0",
+    "react": "^16.12.0",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-license": "^2.2.0",
     "rollup": "^2.40.0",
