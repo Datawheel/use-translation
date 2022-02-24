@@ -199,7 +199,7 @@ export function translateFunctionFactory(dictionary: TranslationDict): Translate
     return path.value;
   };
   
-  cosnt braceRegex = /{{1,2}(\d+|[a-z$_][a-z\d$_]*?(?:\.[a-z\d$_]*?)*?)}{1,2}/gi
+  const braceRegex = /{{1,2}(\d+|[a-z$_][a-z\d$_]*?(?:\.[a-z\d$_]*?)*?)}{1,2}/gi
 
   return (template, data) => {
     const path = getPathInfo(dictionary, template);
