@@ -94,6 +94,11 @@ export interface TranslationContextProps {
   translate: TranslateFunction;
 
   /**
+   * An alias for the `translate` property.
+   */
+  t: TranslateFunction;
+
+  /**
    * The currently active locale.
    */
   locale: string;
@@ -117,25 +122,25 @@ export interface TranslationProviderProps {
 export interface WithTranslationProps extends TranslationContextProps {}
 
 export function translationFactory(options: Partial<FactoryOptions>): FactoryOutput {
-  const TranslationContext: React.Context<TranslationContextProps | undefined> = createContext(undefined);
+  const {defaultLocale, defaultTranslation} = options;
 
-  const TranslationProvider: React.FC<TranslationProviderProps> = (props) => {
-    const [locale, setLocale] = useState(props.defaultLocale || options.defaultLocale);
+  const TranslationContext = createContext<TranslationContextProps | undefined>(undefined);
 
-    const translate: TranslateFunction = useMemo(() => {
+  function TranslationProvider(props: React.PropsWithChildren<TranslationProviderProps>) {
+    const [locale, setLocale] = useState(props.defaultLocale || defaultLocale || "");
+
+    const value: TranslationContextProps = useMemo(() => {
       const { translations = {} } = props;
-      if (!options.defaultTranslation && !hasProperty(translations, locale)) {
+      const translation = translations[locale] || defaultTranslation;
+      if (translation == null) {
         throw new Error(`Translation dictionary for locale "${locale}" not provided.`);
       }
-      return translateFunctionFactory(translations[locale] || options.defaultTranslation);
+      const t = translateFunctionFactory(translation);
+      return {locale, setLocale, t, translate: t};
     }, [locale]);
 
-    return createElement(
-      TranslationContext.Provider,
-      { value: { locale, setLocale, translate } },
-      props.children
-    );
-  };
+    return createElement(TranslationContext.Provider, { value }, props.children);
+  }
 
   function useTranslation(): TranslationContextProps {
     const context = useContext(TranslationContext);
