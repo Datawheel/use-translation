@@ -66,29 +66,6 @@ const App = props => {
 export default App;
 ```
 
-Alternatively you can use the `withTranslation` HOC function to wrap your App
-directly. This will make the wrapped component to now also accept the
-`translationLocale` and `translationDicts` properties.
-
-```jsx
-// src/App.jsx
-import React from "react";
-import {Toolbar} from "./components/Toolbar";
-import {withTranslation} from "./locale/";
-
-const App = props => {
-  {...}
-  return (
-    <div className="app-wrapper">
-      <Toolbar />
-      {...}
-    </div>
-  );
-};
-
-export default withTranslation(App);
-```
-
 This enables the use of the `useTranslation` hook in functional components, and the `TranslationConsumer` component in class components:
 
 ```jsx
@@ -145,12 +122,50 @@ interface TranslationContextProps {
    * Retrieves the labels from the translation dictionary in the current locale.
    */
   translate: TranslateFunction;
+  t: TranslateFunction; // alias for `translate`
 
   /**
    * The currently active locale.
    */
   locale: string;
 }
+```
+
+Alternatively you can use the `withTranslation` HOC function to wrap your component, which will pass the `TranslationContextProps` props to it along with
+the properties passed by its parent.
+
+```tsx
+import React from "react";
+import {WithTranslationProps} from "@datawheel/use-translation";
+import {Toolbar} from "./components/Toolbar";
+import {withTranslation} from "./locale/";
+
+type IProps = {
+  isOpen: boolean;
+}
+
+const Unwrapped: React.FC<IProps & WithTranslationProps> = props => {
+  const {t} = props;
+  return (
+    <div className="component">
+      <Toolbar isOpen={props.isOpen} label={t("toolbar.label")} />
+    </div>
+  );
+};
+
+// `withTranslation` strips `WithTranslationProps` from the expected props
+const Wrapped: React.FC<IProps> = withTranslation(Unwrapped);
+
+const App = (props) => 
+  <TranslationProvider
+    defaultLocale={props.defaultLocale || "en"}
+    translations={translationDicts}
+  >
+    <div className="app">
+      {/* Checks out */}
+      <Wrapped a={true} />
+    </div>
+  </TranslationProvider>
 ```
 
 ## License
