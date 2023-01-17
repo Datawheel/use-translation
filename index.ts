@@ -1,5 +1,5 @@
 import { getPathInfo, hasProperty } from "pathval";
-import React, { createContext, createElement, useContext, useMemo, useState } from "react";
+import { createContext, createElement, useContext, useMemo, useState } from "react";
 
 interface FactoryOptions {
   /**
