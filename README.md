@@ -111,6 +111,11 @@ translator where needed:
 ```ts
 interface TranslationContextProps {
   /**
+   * A list of the locales currently available to the Translation Context.
+   */
+  availableLocale: readonly string[];
+
+  /**
    * Changes the locale currently used.
    * The locale code passed must match with a locale key in the translations dictionary.
    * Calling it triggers a render on everything under the TranslationProvider.
@@ -170,4 +175,5 @@ const App = (props) =>
 
 ## License
 
-MIT © 2021 [Datawheel](https://datawheel.us/)
+© 2023 [Datawheel](https://datawheel.us/)  
+Licensed under MIT

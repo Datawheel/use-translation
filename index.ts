@@ -81,6 +81,12 @@ export interface TranslationDict {
 
 export interface TranslationContextProps {
   /**
+   * Returns a list of the currently defined locale codes available in the 
+   * Translation Context.
+   */
+  readonly availableLocale: readonly string[];
+
+  /**
    * Changes the locale currently used.
    * The locale code passed must match with a locale key in the translations dictionary.
    * Calling it triggers a render on everything under the TranslationProvider.
@@ -101,7 +107,7 @@ export interface TranslationContextProps {
   /**
    * The currently active locale.
    */
-  locale: string;
+  readonly locale: string;
 }
 
 export interface TranslationProviderProps {
@@ -135,8 +141,9 @@ export function translationFactory(options: Partial<FactoryOptions>): FactoryOut
       if (translation == null) {
         throw new Error(`Translation dictionary for locale "${locale}" not provided.`);
       }
+      const availableLocale = Object.freeze(Object.keys(translations));
       const t = translateFunctionFactory(translation);
-      return {locale, setLocale, t, translate: t};
+      return {availableLocale, locale, setLocale, t, translate: t};
     }, [locale]);
 
     return createElement(TranslationContext.Provider, { value }, props.children);
