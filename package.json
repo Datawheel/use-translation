@@ -8,9 +8,9 @@
   "readme": "README.md",
   "exports": {
     ".": {
-      "default": "./index.cjs.js",
       "import": "./index.esm.js",
-      "require": "./index.cjs.js"
+      "require": "./index.cjs.js",
+      "default": "./index.cjs.js"
     }
   },
   "files": [
