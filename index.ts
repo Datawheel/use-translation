@@ -111,6 +111,8 @@ export interface TranslationContextProps {
 }
 
 export interface TranslationProviderProps {
+  children: React.ReactNode;
+
   /**
    * Sets the default locale to use in the app.
    * It's not necesary to use a real ISO 639 code, you can use any key you want.
