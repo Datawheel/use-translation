@@ -1,6 +1,6 @@
 {
   "name": "@datawheel/use-translation",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A react-i18next compatible translation hook for componentized applications.",
   "main": "index.cjs.js",
   "module": "index.esm.js",
